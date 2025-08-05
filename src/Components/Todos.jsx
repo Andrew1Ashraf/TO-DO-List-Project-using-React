@@ -1,7 +1,5 @@
-import { Card, CardContent, Dialog, Typography } from "@mui/material";
-import Grid from "@mui/material/Grid";
+import { Card, CardContent, Grid, Typography, IconButton } from "@mui/material";
 import CheckIcon from "@mui/icons-material/Check";
-import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DriveFileRenameOutlineIcon from "@mui/icons-material/DriveFileRenameOutline";
 import { todosBtnStyles, todoCardStyle } from "../Styles";
@@ -10,39 +8,15 @@ import DeleteTodo from "./DeleteTodo";
 import UpdateTodos from "./UpdateTodos";
 
 const Todos = ({ todo, onDeleteConfirm, onCompletedClick }) => {
-  {
-    /* STATES */
-  }
-
   const [openDelete, setOpenDelete] = useState(false);
   const [openUpdate, setOpenUpdate] = useState(false);
 
-  {
-    /* End STATES */
-  }
+  const handleDeleteOpen = () => setOpenDelete(true);
+  const handleDeleteClose = () => setOpenDelete(false);
 
-  {
-    /* Handlers */
-  }
+  const handleUpdateOpen = () => setOpenUpdate(true);
+  const handleUpdateClose = () => setOpenUpdate(false);
 
-  const handleDeleteOpen = () => {
-    setOpenDelete(true);
-  };
-  const handleDeleteClose = () => {
-    setOpenDelete(false);
-  };
-
-  const handleUpdateOpen = () => {
-    setOpenUpdate(true);
-  };
-
-  const handleUpdateClose = () => {
-    setOpenUpdate(false);
-  };
-
-  {
-    /* End Handlers */
-  }
   return (
     <>
       <DeleteTodo
@@ -55,10 +29,25 @@ const Todos = ({ todo, onDeleteConfirm, onCompletedClick }) => {
 
       <Card sx={todoCardStyle}>
         <CardContent>
-          <Grid container spacing={2} alignItems={"center"}>
+          <Grid
+            container
+            spacing={2}
+            alignItems="center"
+            sx={{
+              flexDirection: { xs: "column", sm: "row" }, // عمودي في الموبايل، صف في الديسك
+              textAlign: { xs: "center", sm: "right" },
+            }}
+          >
+            {/* Buttons */}
             <Grid
-              sx={{ display: "flex", justifyContent: "space-evenly" }}
-              size={4}
+              item
+              xs={12}
+              sm={4}
+              sx={{
+                display: "flex",
+                justifyContent: { xs: "center", sm: "space-evenly" },
+                mb: { xs: 1, sm: 0 }, // مسافة تحت في الموبايل
+              }}
             >
               <IconButton
                 onClick={handleDeleteOpen}
@@ -89,13 +78,13 @@ const Todos = ({ todo, onDeleteConfirm, onCompletedClick }) => {
               </IconButton>
             </Grid>
 
-            <Grid size={8}>
+            {/* Title & Details */}
+            <Grid item xs={12} sm={8}>
               <Typography
                 variant="h4"
                 component="div"
                 sx={{
                   color: "black",
-                  textAlign: "right",
                   textDecoration: todo.isCompleted ? "line-through" : "",
                   overflowWrap: "break-word",
                 }}
@@ -104,11 +93,10 @@ const Todos = ({ todo, onDeleteConfirm, onCompletedClick }) => {
               </Typography>
 
               <Typography
-                variant="p"
+                variant="body1"
                 component="div"
                 sx={{
                   color: "black",
-                  textAlign: "right",
                   fontSize: "18px",
                   textDecoration: todo.isCompleted ? "line-through" : "",
                   overflowWrap: "break-word",

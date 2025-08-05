@@ -3,14 +3,14 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import ButtonGroup from "@mui/material/ButtonGroup";
 import { filterbuttonStyle, theme } from "../Styles";
 import Todos from "./Todos";
 import AddToDo from "./AddToDo";
 import { TodosContext } from "../Contexts/TodosContext";
 import { useState, useContext, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { Box } from "@mui/material";
+import { Box, Drawer, IconButton, Stack } from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
 
 const MainBody = () => {
   const { todos, setTodos } = useContext(TodosContext);
@@ -25,20 +25,15 @@ const MainBody = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  {
-    /*states*/
-  }
+  /* states */
   const [addTodoTitle, setaddTodoTitle] = useState("");
   const [addTodoDetails, setaddTodoDetails] = useState("");
   const [filterTodos, setFilterTodos] = useState("all");
 
-  {
-    /*END states*/
-  }
+  // mobile drawer state (UI only)
+  const [mobileOpen, setMobileOpen] = useState(false);
 
-  {
-    /*Handlers*/
-  }
+  /* Handlers */
   function handleAddTodo() {
     const newTodo = {
       id: uuidv4(),
@@ -84,9 +79,7 @@ const MainBody = () => {
     return filteredTodos;
   }
 
-  {
-    /*END Handlers*/
-  }
+  /* END Handlers */
 
   let todosToBeDisplayed = todos;
 
@@ -103,6 +96,40 @@ const MainBody = () => {
       onCompletedClick={() => handleCompletedTodo(todo.id)}
     />
   ));
+
+  // Buttons UI (reused for desktop and drawer)
+  const filterButtons = (
+    <Stack direction="column" spacing={2} sx={{ p: 2 }}>
+      <Button
+        onClick={() => {
+          setFilterTodos("uncompleted");
+          setMobileOpen(false);
+        }}
+        sx={filterbuttonStyle}
+      >
+        Uncompleted-Tasks
+      </Button>
+      <Button
+        onClick={() => {
+          setFilterTodos("completed");
+          setMobileOpen(false);
+        }}
+        sx={filterbuttonStyle}
+      >
+        Completed-Tasks
+      </Button>
+      <Button
+        onClick={() => {
+          setFilterTodos("all");
+          setMobileOpen(false);
+        }}
+        sx={filterbuttonStyle}
+      >
+        All-Tasks
+      </Button>
+    </Stack>
+  );
+
   return (
     <>
       <Container maxWidth="md">
@@ -120,8 +147,14 @@ const MainBody = () => {
             </Typography>
             <hr />
 
-            {/* Filter Buttons */}
-            <Box sx={{ display: "flex", justifyContent: "center", gap: 2 }}>
+            {/* Desktop view: show inline buttons */}
+            <Box
+              sx={{
+                display: { xs: "none", sm: "flex" },
+                justifyContent: "center",
+                gap: 2,
+              }}
+            >
               <Button
                 onClick={() => setFilterTodos("uncompleted")}
                 sx={filterbuttonStyle}
@@ -141,11 +174,39 @@ const MainBody = () => {
                 All-Tasks
               </Button>
             </Box>
+
+            {/* Mobile view: burger icon */}
+            <Box
+              sx={{
+                display: { xs: "flex", sm: "none" },
+                justifyContent: "center",
+                mt: 1,
+              }}
+            >
+              <IconButton
+                onClick={() => setMobileOpen(true)}
+                aria-label="open filter menu"
+              >
+                <MenuIcon />
+              </IconButton>
+            </Box>
+
+            {/* Drawer for mobile */}
+            <Drawer
+              anchor="right"
+              open={mobileOpen}
+              onClose={() => setMobileOpen(false)}
+              ModalProps={{ keepMounted: true }}
+            >
+              {filterButtons}
+            </Drawer>
+
             {/* Filter Buttons End */}
 
             {/* All Todos */}
             {todoList}
             {/* All Todos End */}
+
             {/* Add To-Do */}
             <AddToDo
               onClick={handleAddTodo}
