@@ -19,7 +19,7 @@ const AddToDo = ({
         marginTop: "20px",
       }}
     >
-      <Grid sx={{ display: "flex" }} size={4}>
+      <Grid sx={{ display: "flex" }} size={{ xs: 12, sm: 4 }}>
         <Button
           disabled={todoTitle.length === 0 || todoDetails.length === 0}
           onClick={onClick}
@@ -35,7 +35,7 @@ const AddToDo = ({
         </Button>
       </Grid>
 
-      <Grid size={8}>
+      <Grid size={{ xs: 12, sm: 8 }}>
         <input
           placeholder="To-Do Title"
           variant="outlined"
