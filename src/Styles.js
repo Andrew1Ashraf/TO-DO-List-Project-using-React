@@ -37,6 +37,10 @@ export const filterbuttonStyle = {
     color: theme.palette.secondary.main,
     border: "none",
   },
+  "&:focus": {
+    color: theme.palette.secondary.main,
+    backgroundColor: theme.palette.primary.main,
+  },
 };
 
 export const todosBtnStyles = {
@@ -47,7 +51,6 @@ export const todosBtnStyles = {
     },
     color: "#ff0000ff",
     backgroundColor: "white",
-
     transition: "all 0.5s",
   },
   completed: {

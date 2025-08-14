@@ -1,14 +1,12 @@
 import "./App.css";
 import MainBody from "./Components/MainBody";
-import { TodosContext } from "./Contexts/TodosContext";
-import { useState } from "react";
-import { initialTodos } from "./Data/TodosData";
 
+import ToastProvider from "./Contexts/ToastContext";
+import TodosProvider from "./Contexts/TodosContext";
 
 function App() {
-  const [todos, setTodos] = useState(initialTodos);
   return (
-    <TodosContext.Provider value={{ todos, setTodos }}>
+    <ToastProvider>
       <div
         style={{
           display: "flex",
@@ -17,9 +15,11 @@ function App() {
           overflowX: "hidden",
         }}
       >
-        <MainBody />
+        <TodosProvider>
+          <MainBody />
+        </TodosProvider>
       </div>
-    </TodosContext.Provider>
+    </ToastProvider>
   );
 }
 

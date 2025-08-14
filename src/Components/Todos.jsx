@@ -9,7 +9,7 @@ import { useState } from "react";
 import DeleteTodo from "./DeleteTodo";
 import UpdateTodos from "./UpdateTodos";
 
-const Todos = ({ todo, onDeleteConfirm, onCompletedClick }) => {
+const Todos = ({ todo, onDeleteConfirm, onCompletedClick}) => {
   {
     /* STATES */
   }
@@ -44,14 +44,7 @@ const Todos = ({ todo, onDeleteConfirm, onCompletedClick }) => {
     /* End Handlers */
   }
   return (
-    <div
-      style={{
-        width: "100%",
-        display: "flex",
-        justifyContent: "center",
-        flexDirection: "column",
-      }}
-    >
+    <div>
       <DeleteTodo
         open={openDelete}
         onClose={handleDeleteClose}

@@ -7,21 +7,17 @@ import { filterbuttonStyle, theme } from "../Styles";
 import Todos from "./Todos";
 import AddToDo from "./AddToDo";
 import { TodosContext } from "../Contexts/TodosContext";
-import { useState, useContext, useEffect } from "react";
-import { v4 as uuidv4 } from "uuid";
+import { useState, useContext, useEffect, useMemo } from "react";
 import { Box, Drawer, IconButton, Stack } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
+import { ToastContext } from "../Contexts/ToastContext.jsx";
 
 const MainBody = () => {
-  const { todos, setTodos } = useContext(TodosContext);
+  const { todos, dispatch } = useContext(TodosContext);
+  const { handleToast } = useContext(ToastContext);
 
   useEffect(() => {
-    const storedTodos = localStorage.getItem("todos");
-    if (storedTodos) {
-      setTodos(JSON.parse(storedTodos));
-    } else {
-      setTodos([]);
-    }
+    dispatch({ type: "getTodos" });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -35,58 +31,51 @@ const MainBody = () => {
 
   /* Handlers */
   function handleAddTodo() {
-    const newTodo = {
-      id: uuidv4(),
-      title: addTodoTitle,
-      details: addTodoDetails,
-      isCompleted: false,
-    };
-
-    const addedTodo = [...todos, newTodo];
-    setTodos(addedTodo);
-    localStorage.setItem("todos", JSON.stringify(addedTodo));
+    dispatch({
+      type: "Add",
+      payload: { title: addTodoTitle, details: addTodoDetails },
+    });
     setaddTodoTitle("");
     setaddTodoDetails("");
+    handleToast("Todo Added successfully", "success");
   }
 
   function handleDeleteTodo(id) {
-    const deletedTodo = todos.filter((todo) => todo.id !== id);
-    setTodos(deletedTodo);
-    localStorage.setItem("todos", JSON.stringify(deletedTodo));
+    dispatch({ type: "Delete", payload: { id } });
+    handleToast("Todo Deleted successfully", "danger");
   }
 
   function handleCompletedTodo(id) {
-    const updatedTodos = todos.map((todo) => {
-      if (todo.id === id) {
-        return { ...todo, isCompleted: !todo.isCompleted };
-      }
-      return todo;
-    });
-    setTodos(updatedTodos);
-    localStorage.setItem("todos", JSON.stringify(updatedTodos));
+    const todo = todos.find((t) => t.id === id);
+    if (!todo.isCompleted) {
+      handleToast("Todo Set as Completed ✔", "success");
+    } else {
+      handleToast("Todo Set as Uncompleted", "warning");
+    }
+
+    dispatch({ type: "Completed", payload: { id } });
   }
 
-  function handleUncompletedTodos() {
-    const filteredTodos = todos.filter((todo) => {
+  const showUnCompletedTodos = useMemo(() => {
+    return todos.filter((todo) => {
       return !todo.isCompleted;
     });
-    return filteredTodos;
-  }
-  function handleCompletedTodos() {
-    const filteredTodos = todos.filter((todo) => {
+  }, [todos]);
+
+  const showCompletedTodos = useMemo(() => {
+    return todos.filter((todo) => {
       return todo.isCompleted;
     });
-    return filteredTodos;
-  }
+  }, [todos]);
 
   /* END Handlers */
 
   let todosToBeDisplayed = todos;
 
   if (filterTodos === "uncompleted") {
-    todosToBeDisplayed = handleUncompletedTodos();
+    todosToBeDisplayed = showUnCompletedTodos;
   } else if (filterTodos === "completed") {
-    todosToBeDisplayed = handleCompletedTodos();
+    todosToBeDisplayed = showCompletedTodos;
   }
   const todoList = todosToBeDisplayed.map((todo) => (
     <Todos
@@ -132,7 +121,7 @@ const MainBody = () => {
 
   return (
     <>
-      <Container maxWidth="md">
+      <Container maxWidth="false" style={{ height: "100%", width: "80%" }}>
         <Card
           sx={{ minWidth: 275 }}
           style={{ backgroundColor: theme.palette.background.main }}

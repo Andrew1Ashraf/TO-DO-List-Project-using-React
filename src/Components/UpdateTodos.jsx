@@ -7,29 +7,25 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import { Dialog } from "@mui/material";
 import { TodosContext } from "../Contexts/TodosContext";
+import { ToastContext } from "../Contexts/ToastContext";
 
 const UpdateTodos = ({ open, Close, todo }) => {
-  const { todos, setTodos } = useContext(TodosContext);
+  const { dispatch } = useContext(TodosContext);
+  const { handleToast } = useContext(ToastContext);
   const [editTodo, setEditTodo] = useState({
     title: todo.title,
     details: todo.details,
   });
 
   const handleUpdateTodo = (id, updatedTodo) => {
-    const updatedTodos = todos.map((t) => {
-      if (t.id === id) {
-        return { ...t, ...updatedTodo };
-      }
-      return t;
-    });
-    setTodos(updatedTodos);
-    localStorage.setItem("todos", JSON.stringify(updatedTodos));
+    dispatch({ type: "Update", payload: { id, updatedTodo } });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     handleUpdateTodo(todo.id, editTodo);
     Close;
+    handleToast("Todo Edited ✏ ✔", "primary");
   };
 
   return (
@@ -66,7 +62,7 @@ const UpdateTodos = ({ open, Close, todo }) => {
           />
           <DialogActions>
             <Button onClick={Close}>Cancel</Button>
-            <Button onClick={Close} type="submit">
+            <Button type="submit" onClick={Close}>
               Save
             </Button>
           </DialogActions>
